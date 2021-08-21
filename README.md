@@ -1,3 +1,5 @@
+#new line
+
 # Локальные каталоги .terraform
 
 # Файлы .tfstate
