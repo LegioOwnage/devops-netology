@@ -45,32 +45,14 @@ vagrant@netology1:~$ ssh localhost 'tty'
   ssh -t localhost 'tty'
 
 13. Бывает, что есть необходимость переместить запущенный процесс из одной сессии в другую. Попробуйте сделать это, воспользовавшись reptyr. Например, так можно перенести в screen процесс, который вы запустили по ошибке в обычной SSH-сессии.
-Ответ: не понимаю, видимо программа не установлена. Вот что делаю:
-vagrant@vagrant:~$ ps -a
-    PID TTY          TIME CMD
-   1118 tty1     00:00:01 bash
-   1828 tty3     00:00:00 bash
-   2376 pts/0    00:00:00 top
-   2639 pts/0    00:00:00 ps
-vagrant@vagrant:~$ reptyr 2376
--bash: reptyr: command not found
-
-Вот что происходит, когда пытаюсь установить:
-vagrant@vagrant:~$ sudo apt-get install reptyr
-Reading package lists... Done
-Building dependency tree
-Reading state information... Done
-The following NEW packages will be installed:
-  reptyr
-0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
-Need to get 22.5 kB of archives.
-After this operation, 67.6 kB of additional disk space will be used.
-0% [Working]
-Err:1 http://archive.ubuntu.com/ubuntu focal/universe amd64 reptyr amd64 0.6.2-1.3
-  Temporary failure resolving 'archive.ubuntu.com'
-E: Failed to fetch http://archive.ubuntu.com/ubuntu/pool/universe/r/reptyr/reptyr_0.6.2-1.3_amd64.deb  Temporary failure resolving 'archive.ubuntu.com'
-E: Unable to fetch some archives, maybe run apt-get update or try with --fix-missing?
-
+Ответ: 
+  зпустил процесс top
+  сочетанием клавиш ctrl+z свернул его
+  screen #открыл новое окно терминала
+  ps -a #узнал PID процесса top
+  сначала вылетала ошибка об ограничениях. Снял их:
+  echo 0 | sudo tee /proc/sys/kernel/yama/ptrace_scope
+ reptyr 1149 #вывел процесс на экран
 14. sudo echo string > /root/new_file не даст выполнить перенаправление под обычным пользователем, так как перенаправлением занимается процесс shell'а, который запущен без sudo под вашим пользователем. Для решения данной проблемы можно использовать конструкцию echo string | sudo tee /root/new_file. Узнайте что делает команда tee и почему в отличие от sudo echo команда с sudo tee будет работать.
 Ответ:Потому что > позволяет  делать вывод в файл, но у него недостаточно прав чтобы сделать это в каталоге /root. Т.е выданные права на запись текста распространяются только на первую операцию (вывод текста)
 А sudo tee позволяет записать данные в файл с разрешением от sudo и переносит команду без препятствий.
